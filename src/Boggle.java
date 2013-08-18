@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -17,13 +19,17 @@ import javax.swing.JToggleButton;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 
 public class Boggle {
 	
 	// Boggle Options
 	static boolean rotateDice = false;
+	static int fontSize = 72;
 	
+	private int roundNum = 0;
 	
 	static Dice[] d;
 	static final int GRID_SIZE = 4;
@@ -57,7 +63,7 @@ public class Boggle {
 	}
 
 	public static void main(String[] args) throws Exception{
-		log("Boggle app 0.3 started!");
+		log("Boggle App 0.5 started!");
 		
 		log("Setting up dice definitions...");
 		// Set up dice definitions
@@ -181,7 +187,9 @@ public class Boggle {
 		start = new JButton("Start");
 		start.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				log("Starting round:");
+				// Increase round count
+				roundNum++;
+				log("Starting round "+roundNum+":");
 				start.setEnabled(false);
 				board.showBoard(false);
 				board.setNotice("5");
@@ -244,6 +252,7 @@ public class Boggle {
 		// Options panel
 		JPanel options = new JPanel();
 		options.add(new JLabel("Options:"));
+		
 		JToggleButton rotate = new JToggleButton("Rotate Dice");
 		rotate.setSelected(rotateDice);
 		
@@ -252,8 +261,16 @@ public class Boggle {
 				rotateDice = (e.getStateChange() == ItemEvent.SELECTED);
 			}
 		});
-		
 		options.add(rotate);
+		
+		JSpinner fontSizer = new JSpinner(new SpinnerNumberModel(fontSize, 12, 150, 1));
+		fontSizer.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				board.setDiceFontSize((int) (((JSpinner) (e.getSource())).getValue()));
+			}
+		});
+
+		options.add(fontSizer);
 		
 		controlsBot.add(mainButtons,BorderLayout.NORTH);
 		controlsBot.add(options,BorderLayout.SOUTH);
@@ -305,7 +322,12 @@ public class Boggle {
 		
 		public void end(){
 			c = true;
-			if(cancel(true)){log("Round cancelled",3);}
+			if(cancel(true)){
+				// Decrease round number
+				roundNum--;
+				log("Round cancelled",3);
+				
+			}
 		}
 		
 		protected Integer doInBackground() throws Exception {

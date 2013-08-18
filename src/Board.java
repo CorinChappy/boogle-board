@@ -29,6 +29,9 @@ public class Board extends JPanel{
 	// The dice
 	private List<Dice> die = new ArrayList<Dice>(Boggle.GRID_SIZE*Boggle.GRID_SIZE);
 	
+
+	private Font diceFont = new Font("Arial",Font.BOLD,Boggle.fontSize);
+	
 	
 	public Board() {
 		this.setBorder(new LineBorder(new Color(0, 0, 0), 3, true));
@@ -123,6 +126,19 @@ public class Board extends JPanel{
 		title.setText(s);
 	}
 	
+	
+	void setDiceFontSize(Integer size){
+		Boggle.fontSize = size;
+		diceFont = diceFont.deriveFont(size.floatValue());
+		for(DiceDisplay[] a : grid){
+			for(DiceDisplay b : a){
+				b.setDiceFont(diceFont);
+			}
+		}
+		
+	}
+	
+	
 	private class DiceDisplay extends JComponent {
 		
 		private DiceLabel label = new DiceLabel();
@@ -147,15 +163,21 @@ public class Board extends JPanel{
 			label.setText(s);
 		}
 		
+		void setDiceFont(Font f){
+			label.setDiceFont(f);
+		}
 		
 		private class DiceLabel extends JPanel {
 			
 			private JLabel l = new JLabel("");
-			private Font font = new Font("Arial",Font.BOLD,50);
+			
+			void setDiceFont(Font f){
+				l.setFont(f);
+			}
 			
 			public DiceLabel() {
 				l.setHorizontalAlignment(SwingConstants.CENTER);
-				l.setFont(font);
+				l.setFont(diceFont);
 				
 				this.setLayout(new BorderLayout());
 				this.add(l);
