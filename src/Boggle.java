@@ -25,10 +25,6 @@ import javax.swing.event.ChangeListener;
 
 public class Boggle {
 	
-	// Boggle Options
-	static boolean rotateDice = false;
-	static int fontSize = 72;
-	
 	private int roundNum = 0;
 	
 	static Dice[] d;
@@ -63,7 +59,7 @@ public class Boggle {
 	}
 
 	public static void main(String[] args) throws Exception{
-		log("Boggle App 0.5 started!");
+		log("Boggle App 0.6 started!");
 		
 		log("Setting up dice definitions...");
 		// Set up dice definitions
@@ -254,16 +250,16 @@ public class Boggle {
 		options.add(new JLabel("Options:"));
 		
 		JToggleButton rotate = new JToggleButton("Rotate Dice");
-		rotate.setSelected(rotateDice);
+		rotate.setSelected(board.rotateDice);
 		
 		rotate.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				rotateDice = (e.getStateChange() == ItemEvent.SELECTED);
+				board.rotateDice = (e.getStateChange() == ItemEvent.SELECTED);
 			}
 		});
 		options.add(rotate);
 		
-		JSpinner fontSizer = new JSpinner(new SpinnerNumberModel(fontSize, 12, 150, 1));
+		JSpinner fontSizer = new JSpinner(new SpinnerNumberModel(board.fontSize, 12, 150, 1));
 		fontSizer.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				board.setDiceFontSize((int) (((JSpinner) (e.getSource())).getValue()));

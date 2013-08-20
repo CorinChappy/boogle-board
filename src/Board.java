@@ -20,6 +20,11 @@ import javax.swing.SwingConstants;
 
 public class Board extends JPanel{
 	
+	// Board Options
+	boolean rotateDice = false;
+	int fontSize = 72;
+	
+	
 	// The labels on the board
 	private DiceDisplay[][] grid = new DiceDisplay[Boggle.GRID_SIZE][Boggle.GRID_SIZE];
 	private JPanel container;
@@ -30,7 +35,7 @@ public class Board extends JPanel{
 	private List<Dice> die = new ArrayList<Dice>(Boggle.GRID_SIZE*Boggle.GRID_SIZE);
 	
 
-	private Font diceFont = new Font("Arial",Font.BOLD,Boggle.fontSize);
+	private Font diceFont = new Font("Arial",Font.BOLD,fontSize);
 	
 	
 	public Board() {
@@ -90,14 +95,14 @@ public class Board extends JPanel{
 			d.roll();
 		}
 		
-		if(Boggle.rotateDice){Boggle.log("Rotating dice",2);}
+		if(rotateDice){Boggle.log("Rotating dice",2);}
 		// Display the results
 		int k = 0;
 		for(int i = 0;i < Boggle.GRID_SIZE;i++){
 			for(int j = 0;j < Boggle.GRID_SIZE;j++){
 				grid[i][j].setText(die.get(k++).getStringLetter());
 				// Rotate each square
-				if(Boggle.rotateDice){rotateDice(i, j);}
+				if(rotateDice){rotateDice(i, j);}
 			}
 		}
 	}
@@ -128,7 +133,7 @@ public class Board extends JPanel{
 	
 	
 	void setDiceFontSize(Integer size){
-		Boggle.fontSize = size;
+		fontSize = size;
 		diceFont = diceFont.deriveFont(size.floatValue());
 		for(DiceDisplay[] a : grid){
 			for(DiceDisplay b : a){
@@ -189,8 +194,10 @@ public class Board extends JPanel{
 			// Paint component
 			protected void paintComponent(Graphics g){
 				super.paintComponent(g);
-				Graphics2D g2 = (Graphics2D) g;
-				g2.rotate(vals[rot], this.getWidth()/2, this.getHeight()/2);
+				if(rotateDice){
+					Graphics2D g2 = (Graphics2D) g;
+					g2.rotate(vals[rot], this.getWidth()/2, this.getHeight()/2);
+				}
 			}
 		}
 	}
