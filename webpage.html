@@ -1,0 +1,41 @@
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Boggle Server (v0.7)</title>
+</head>
+<body>
+
+<div id="status">@status</div>
+
+<div id="formContainer">
+	<button onclick="doAction('start')">Start</a>
+	<button onclick="doAction('showBoard')">Show Board</a>
+</div>
+
+
+
+
+<script type="text/javascript">
+	function doAction(s){
+		// Set up ajax request
+		var request = loadXMLDoc();
+		
+		request.open("GET","?action="+s,false);
+		request.send();
+	
+		// If there was a response, display it
+		if(request.responseText != "" && request.responseText != null){
+			document.getElementById("status").innerHTML = request.responseText;
+		}
+	}
+	
+	function loadXMLDoc(){
+		if(window.XMLHttpRequest){
+			return new XMLHttpRequest();
+		}else{
+			return new ActiveXObject("Microsoft.XMLHTTP");
+		}
+	}
+</script>
+</body>
+<html>

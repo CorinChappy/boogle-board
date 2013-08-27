@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -19,6 +21,12 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import org.simpleframework.http.core.Container;
+import org.simpleframework.http.core.ContainerServer;
+import org.simpleframework.transport.Server;
+import org.simpleframework.transport.connect.Connection;
+import org.simpleframework.transport.connect.SocketConnection;
 
 
 public class Boggle {
@@ -43,6 +51,9 @@ public class Boggle {
 	JButton start;
 	JButton reveal;
 	JButton cancel;
+	
+	// 0 = waiting, 1 = game ended, 2 = game in progress (locked)
+	private int inGame = 2;
 	
 	static void log(String s){
 		log(s,1);
@@ -138,10 +149,20 @@ public class Boggle {
 				'O','O','O','T','T','U'
 		});
 		
+		// Create the Boggle Object
+		final Boggle b = new Boggle();
+		
+		log("Setting up server");
+		Container container = new BoggleServer(b);
+		Server server = new ContainerServer(container);
+		Connection connection = new SocketConnection(server);
+		SocketAddress address = new InetSocketAddress(8080);
+		connection.connect(address);
+
 		log("Passing over to EDT =>");
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				new Boggle().createGUI(d);
+				b.createGUI(d);
 			}
 		});
 	}
@@ -168,6 +189,7 @@ public class Boggle {
 		frame.setVisible(true);
 		
 		log("Game ready and waiting!");
+		inGame = 0;
 	}
 	
 	
@@ -181,35 +203,7 @@ public class Boggle {
 		start = new JButton("Start");
 		start.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				// Increase round count
-				roundNum++;
-				log("Starting round "+roundNum+":");
-				start.setEnabled(false);
-				board.showBoard(false);
-				board.setNotice("5");
-				new SwingWorker<Object, Object>(){
-					int i;
-					protected Object doInBackground() throws Exception {
-						log("Countdown starting...",2);
-						for(i = 5;i > 0;i--){
-							// Sleep 5 timess
-							try{Thread.sleep(1000);}catch(InterruptedException ex){}
-							publish();
-						}
-						return null;
-					}
-					protected void process(List<Object> ls){
-						board.setNotice(""+i+"");
-					}
-					protected void done(){
-						// When done show the board and continue
-						board.showBoard(true);
-						board.shuffle();
-						wc = new CountdownWorker();
-						wc.execute();
-					}
-					
-				}.execute();
+				start();
 			}
 		});
 		
@@ -218,9 +212,7 @@ public class Boggle {
 		reveal.setEnabled(false);
 		reveal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				board.showBoard(true);
-				reveal.setEnabled(false);
-				start.setEnabled(true);
+				showBoard();
 			}
 		});
 		
@@ -302,6 +294,59 @@ public class Boggle {
 		frame.add(controlsBot,BorderLayout.SOUTH);
 	}
 	
+	
+	
+	public boolean start(){
+		// Do a check here
+		if(inGame != 0){
+			return false;
+		}
+		// Set inGame
+		inGame = 2;
+		
+		// Increase round count
+		roundNum++;
+		log("Starting round "+roundNum+":");
+		start.setEnabled(false);
+		board.showBoard(false);
+		board.setNotice("5");
+		new SwingWorker<Object, Object>(){
+			int i;
+			protected Object doInBackground() throws Exception {
+				log("Countdown starting...",2);
+				for(i = 5;i > 0;i--){
+					// Sleep 5 timess
+					try{Thread.sleep(1000);}catch(InterruptedException ex){}
+					publish();
+				}
+				return null;
+			}
+			protected void process(List<Object> ls){
+				board.setNotice(""+i+"");
+			}
+			protected void done(){
+				// When done show the board and continue
+				board.showBoard(true);
+				board.shuffle();
+				wc = new CountdownWorker();
+				wc.execute();
+			}
+			
+		}.execute();
+		return true;
+	}
+	
+	
+	public boolean showBoard(){
+		if(inGame == 1){
+			inGame = 0;
+			board.showBoard(true);
+			reveal.setEnabled(false);
+			start.setEnabled(true);
+			return true;
+		}
+		return false;
+	}
 	
 	
 	
@@ -391,6 +436,8 @@ public class Boggle {
 			start.setEnabled(false);
 			
 			log("Round end.");
+			// Set inGame
+			inGame = 1;
 		}
 		
 	}
