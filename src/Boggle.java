@@ -68,7 +68,7 @@ public class Boggle {
 	}
 
 	public static void main(String[] args) throws Exception{
-		log("Boggle App 0.6 started!");
+		log("Boggle App 0.7 started!");
 		
 		log("Setting up dice definitions...");
 		// Set up dice definitions
