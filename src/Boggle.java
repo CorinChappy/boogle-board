@@ -5,8 +5,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -72,83 +76,19 @@ public class Boggle {
 		
 		log("Setting up dice definitions...");
 		// Set up dice definitions
-		d = new Dice[25];
-		d[0] = new Dice(new char[]{
-				'A','A','A','F','R','S'
-		});
-		d[1] = new Dice(new char[]{
-				'A','A','E','E','E','E'
-		});
-		d[2] = new Dice(new char[]{
-				'A','A','F','I','R','S'
-		});
-		d[3] = new Dice(new char[]{
-				'A','D','E','N','N','N'
-		});
-		d[4] = new Dice(new char[]{
-				'A','E','E','E','E','M'
-		});
-		d[5] = new Dice(new char[]{
-				'A','E','E','G','M','U'
-		});
-		d[6] = new Dice(new char[]{
-				'A','E','G','M','N','N'
-		});
-		d[7] = new Dice(new char[]{
-				'A','F','I','R','S','Y'
-		});
-		d[8] = new Dice(new char[]{
-				'B','J','K','Q','X','Z'
-		});
-		d[9] = new Dice(new char[]{
-				'C','C','E','N','S','T'
-		});
-		d[10] = new Dice(new char[]{
-				'C','E','I','I','L','T'
-		});
-		d[11] = new Dice(new char[]{
-				'C','C','I','L','P','T'
-		});
-		d[12] = new Dice(new char[]{
-				'C','E','I','P','S','T'
-		});
-		d[13] = new Dice(new char[]{
-				'D','D','H','N','O','T'
-		});
-		d[14] = new Dice(new char[]{
-				'D','H','H','L','O','R'
-		});
-		d[15] = new Dice(new char[]{
-				'D','H','L','N','O','R'
-		});
-		d[16] = new Dice(new char[]{
-				'D','H','L','N','O','R'
-		});
-		d[17] = new Dice(new char[]{
-				'E','I','I','I','T','T'
-		});
-		d[18] = new Dice(new char[]{
-				'E','M','O','T','T','T'
-		});
-		d[19] = new Dice(new char[]{
-				'E','N','S','S','S','U'
-		});
-		d[20] = new Dice(new char[]{
-				'F','I','P','R','S','Y'
-		});
-		d[21] = new Dice(new char[]{
-				'G','O','R','R','V','W'
-		});
-		d[22] = new Dice(new char[]{
-				'I','P','R','R','R','Y'
-		});
-		d[23] = new Dice(new char[]{
-				'N','O','O','T','U','W'
-		});
-		d[24] = new Dice(new char[]{
-				'O','O','O','T','T','U'
-		});
+		ArrayList<Dice> dice = new ArrayList<Dice>();
 		
+		// Create the file
+		File def = new File("dice.new.4.txt");
+		BufferedReader reader = new BufferedReader(new FileReader(def));
+		while(reader.ready()){
+			Dice d = new Dice(reader.readLine().toCharArray());
+			dice.add(d);
+		}
+		reader.close();
+		
+		// Put into Array		
+		d = dice.toArray(new Dice[0]);
 		// Create the Boggle Object
 		final Boggle b = new Boggle();
 		

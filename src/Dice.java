@@ -9,7 +9,8 @@ public class Dice {
 	private int FU = 0;
 	
 	public Dice(char[] l) throws Exception{
-		if(l.length < 6){throw new Exception();}
+		// Ignore more than 6 chars
+		//if(l.length < 6){throw new Exception();}
 		for(int j = 0;j < 6;j++){
 			letters[j] = l[j];
 		}

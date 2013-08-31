@@ -50,6 +50,7 @@ public class BoggleServer implements Container {
 					String ln = reader.readLine().replaceAll("@status", status);
 					body.println(ln);
 				}
+				reader.close();
 			}else{
 				
 				if(action.equals("start")){
