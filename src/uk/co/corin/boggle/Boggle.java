@@ -1,3 +1,5 @@
+package uk.co.corin.boggle;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -72,15 +74,17 @@ public class Boggle {
 	}
 
 	public static void main(String[] args) throws Exception{
-		log("Boggle App 0.7 started!");
+		log("Boggle App 0.8 started!");
 		
 		log("Setting up dice definitions...");
 		// Set up dice definitions
 		ArrayList<Dice> dice = new ArrayList<Dice>();
 		
 		// Create the file
-		File def = new File("dice.new.4.txt");
+		File def = new File("boards/dice.new.4.txt");
+		//InputStream def = ClassLoader.getSystemResourceAsStream("/dice.new.4.txt");
 		BufferedReader reader = new BufferedReader(new FileReader(def));
+		//BufferedReader reader = new BufferedReader(new InputStreamReader(def));
 		while(reader.ready()){
 			Dice d = new Dice(reader.readLine().toCharArray());
 			dice.add(d);

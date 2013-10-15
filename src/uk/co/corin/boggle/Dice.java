@@ -1,3 +1,5 @@
+package uk.co.corin.boggle;
+
 import java.util.Random;
 
 
